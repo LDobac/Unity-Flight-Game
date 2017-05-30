@@ -19,6 +19,8 @@ public class PlayerBulletMemPool : MonoBehaviour
 		{
 			if(playerBullet[i].IsIdle)
 			{
+				playerBullet[i].gameObject.SetActive(true);
+
 				return playerBullet[i];
 			}
 		}

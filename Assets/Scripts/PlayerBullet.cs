@@ -37,7 +37,7 @@ public class PlayerBullet : Bullet
 	}
 	public void Init(Vector3 pos,Vector2 dir, float vel,int dmg,Boundary boundary)
 	{
-		base.Init(vel,0.0f,dir,1.0f);
+		base.Init(vel,0.0f,dir,0.0f);
 
 		transform.position = pos;
 
@@ -51,5 +51,7 @@ public class PlayerBullet : Bullet
 		base.Idle();
 
 		transform.position = new Vector3(-20.0f,-20.0f,0.0f);
+
+		gameObject.SetActive(false);
 	}
 }
