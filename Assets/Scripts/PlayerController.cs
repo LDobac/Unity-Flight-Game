@@ -18,6 +18,8 @@ public class PlayerController : MonoBehaviour
 	public float bulletSpeed;
 	public Boundary moveLimit;
 
+	[SerializeField]
+	private int life = 0;
 	private float shotDelayTimer = 0.0f;
 	private GameObject bulletSpawnPlace;
 	private PlayerBulletMemPool bulletPool;
@@ -27,19 +29,24 @@ public class PlayerController : MonoBehaviour
 		bulletSpawnPlace = transform.GetChild(0).gameObject;
 
 		bulletPool = GetComponent<PlayerBulletMemPool>();
+
+		life = 5;
 	}
 	private void Update()
 	{
-		FlightMove();
-
-		shotDelayTimer += Time.deltaTime;
-		if(shotDelayTimer >= shotDelay)
+		if(life > 0)
 		{
-			if(Input.GetKey(KeyCode.Space))
-			{
-				ShotBullet();
+			FlightMove();
 
-				shotDelayTimer = 0.0f;
+			shotDelayTimer += Time.deltaTime;
+			if(shotDelayTimer >= shotDelay)
+			{
+				if(Input.GetKey(KeyCode.Space))
+				{
+					ShotBullet();
+
+					shotDelayTimer = 0.0f;
+				}
 			}
 		}
 	}
@@ -61,6 +68,11 @@ public class PlayerController : MonoBehaviour
 	private void ShotBullet()
 	{
 		PlayerBullet bullet = bulletPool.RequestIdleBullet();
-		bullet.Init(bulletSpawnPlace.transform.position,Vector3.up,bulletSpeed);
+		bullet.Init(bulletSpawnPlace.transform.position,Vector2.up,bulletSpeed,1);
+	}
+
+	public void Hit()
+	{
+		life--;
 	}
 }

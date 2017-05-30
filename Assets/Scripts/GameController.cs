@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour 
 {
+	private bool successfulAllStage = false;
 	private int curStage = 0;
 	private StageData[] stages;
 
 	private void Awake()
 	{
-		stages = new StageData[3];
+		stages = new StageData[1];
 	}
 
 	private void Start()
@@ -21,19 +22,27 @@ public class GameController : MonoBehaviour
 
 	private void Update()
 	{
-		if(!stages[curStage - 1].CheckPassAllPattern())
+		if(!successfulAllStage)
 		{
-			stages[curStage - 1].UpdatePattern();
-		}
-		else
-		{
-			if(stages.Length == curStage)
+			if(!stages[curStage - 1].IsClear && !stages[curStage - 1].IsRunning)
 			{
+				stages[curStage - 1].StartStage();
+			}
 
+			if(stages[curStage - 1].IsRunning)
+			{
+				stages[curStage - 1].UpdatePattern();
 			}
 			else
 			{
-				curStage++;
+				if(stages.Length == curStage)
+				{
+					successfulAllStage = true;
+				}
+				else
+				{
+					curStage++;
+				}
 			}
 		}
 	}

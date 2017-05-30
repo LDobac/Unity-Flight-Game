@@ -6,7 +6,8 @@ public class PlayerBullet : Bullet
 {
 	public float removeDistance;
 
-	private SpriteRenderer spriteRenderer;
+	protected int damege = 0;
+	protected SpriteRenderer spriteRenderer;
 
 	private void Start()
 	{
@@ -27,18 +28,17 @@ public class PlayerBullet : Bullet
 	{
 		if(other.CompareTag("Monster"))
 		{
+			other.GetComponent<Monster>().Hit(damege);
 			Idle();
 		}	
 	}
-	public void Init(Vector3 position,Vector3 dir,float speed)
+	public void Init(Vector3 position,Vector2 dir, float vel,int damege)
 	{
+		base.Init(vel,0.0f,dir,0.0f);
+
 		transform.position = position;
 
-		direction = dir;
-
-		moveSpeed = speed;
-
-		isIdle = false;
+		this.damege = damege;
 	}
 
 	public override void Idle()
