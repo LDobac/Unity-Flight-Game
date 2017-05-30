@@ -6,12 +6,8 @@ public class Bullet : MonoBehaviour
 {
 	protected float velocity;
     protected float acceleration;
-    protected float angle;
-    protected float angleAcceleration;
-    
-    //이 시간이 지나면 총알을 삭제
-    protected float idleTime = 0.0f;
-    protected float idleTimer = 0.0f;
+    protected float dgrAngle;
+    protected float dgrAngleAcceleration;
     protected bool isIdle = false;
     protected Vector2 direction = Vector2.up; 
 
@@ -20,45 +16,44 @@ public class Bullet : MonoBehaviour
         if(!isIdle)
         {
             velocity += acceleration;
-            angle += angleAcceleration;
 
-            direction.Rotate(angleAcceleration);
+            direction = direction.Rotate(dgrAngleAcceleration);
+
+            //Atan2를 사용시 x : 1, y : 0 일경우 0도, x : 0 , y : 1 일경우 0도 처럼 행동 하기 위해 90도를 빼줌
+            dgrAngle = (Mathf.Atan2(direction.y,direction.x) * Mathf.Rad2Deg) - 90;
 
             Vector3 movement = direction * velocity * Time.deltaTime;
-            transform.Translate(movement);
-
-            if(idleTime != 0.0f)
-            {
-                idleTimer += Time.deltaTime;
-
-                if(idleTimer >= idleTime)
-                {
-                    Idle();
-                }
-            }
+            //transform.Translate(movement); transform.foward를 기준으로 움직임
+            transform.position = movement + transform.position;
+            transform.rotation = Quaternion.Euler(0.0f,0.0f,dgrAngle);
         }
     }
 
-    //각도 받는것에서 방향벡터로 바꿈 업데이트에서 방향벡터를 각가속도에 따라 회전
-    public virtual void Init(float vel,float acc,Vector2 dir,float angAcc,float removeTime = 0.0f)
+    public virtual void Init(float vel,float acc,Vector2 dir,float angAccDgr)
     {
         isIdle = false;
-
-        idleTimer = 0.0f;
 
         velocity = vel;
         acceleration = acc;
         direction = dir;
 
-        angle = Mathf.Atan2(direction.y,direction.x);
-        angleAcceleration = angAcc;
+        dgrAngle = Mathf.Atan2(direction.y,direction.x) * Mathf.Rad2Deg;
 
-        idleTime = removeTime;
+        //직관성을 위해 시계 방향 회전을 하기 위해 부호를 바꿈
+        dgrAngleAcceleration = -angAccDgr;
     }
 
     public virtual void Idle()
     {
         isIdle = true;
+        velocity = 0.0f;
+        acceleration = 0.0f;
+        dgrAngle = 0.0f;
+        dgrAngleAcceleration = 0.0f;
+        direction = Vector2.up; 
+
+        transform.position = Vector3.zero;
+        transform.rotation = Quaternion.identity;
     }
 
     public bool IsIdle
@@ -83,17 +78,3 @@ public class Bullet : MonoBehaviour
 
 }
 
-public static class Vector2Extension 
-{
-     public static Vector2 Rotate(this Vector2 v, float degrees)
-    {
-         float radians = degrees * Mathf.Deg2Rad;
-         float sin = Mathf.Sin(radians);
-         float cos = Mathf.Cos(radians);
-         
-         float tx = v.x;
-         float ty = v.y;
- 
-         return new Vector2(cos * tx - sin * ty, sin * tx + cos * ty);
-     }
- }

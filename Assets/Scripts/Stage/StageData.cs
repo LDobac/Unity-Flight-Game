@@ -1,4 +1,5 @@
-﻿
+﻿using UnityEngine;
+
 public abstract class StageData
 {
 	protected bool isRunning = false;
@@ -25,6 +26,8 @@ public abstract class StageData
 			{
 				isRunning = false;
 				isClear = true;
+
+				Debug.Log("Pass All Pattern Stage");
 			}
 		}
 	}

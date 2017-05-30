@@ -4,21 +4,11 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour 
 {
-	[System.Serializable]
-	public class Boundary
-	{
-		public float minX;
-		public float minY;
-		public float maxX;
-		public float maxY;
-	}
-
 	public float moveSpeed;
 	public float shotDelay;
 	public float bulletSpeed;
 	public Boundary moveLimit;
 
-	[SerializeField]
 	private int life = 0;
 	private float shotDelayTimer = 0.0f;
 	private GameObject bulletSpawnPlace;
@@ -68,7 +58,7 @@ public class PlayerController : MonoBehaviour
 	private void ShotBullet()
 	{
 		PlayerBullet bullet = bulletPool.RequestIdleBullet();
-		bullet.Init(bulletSpawnPlace.transform.position,Vector2.up,bulletSpeed,1);
+		bullet.Init(bulletSpawnPlace.transform.position,Vector2.up,bulletSpeed,1,moveLimit);
 	}
 
 	public void Hit()

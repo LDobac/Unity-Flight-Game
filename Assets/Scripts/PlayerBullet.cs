@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class PlayerBullet : Bullet 
 {
-	public float removeDistance;
-
 	protected int damege = 0;
+	protected Boundary idleBoundary;
 	protected SpriteRenderer spriteRenderer;
 
 	private void Start()
@@ -16,11 +15,15 @@ public class PlayerBullet : Bullet
 
 	protected override void Update()
 	{
-		base.Update();
-
-		if(transform.position.y >= removeDistance)
+		if(!isIdle)
 		{
-			Idle();
+			base.Update();
+
+			if(transform.position.x > idleBoundary.maxX || transform.position.x < idleBoundary.minX ||
+				transform.position.y > idleBoundary.maxY || transform.position.y < idleBoundary.minY)
+			{
+				Idle();
+			}
 		}
 	}
 
@@ -32,13 +35,15 @@ public class PlayerBullet : Bullet
 			Idle();
 		}	
 	}
-	public void Init(Vector3 position,Vector2 dir, float vel,int damege)
+	public void Init(Vector3 pos,Vector2 dir, float vel,int dmg,Boundary boundary)
 	{
-		base.Init(vel,0.0f,dir,0.0f);
+		base.Init(vel,0.0f,dir,1.0f);
 
-		transform.position = position;
+		transform.position = pos;
 
-		this.damege = damege;
+		damege = dmg;
+
+		idleBoundary = boundary;
 	}
 
 	public override void Idle()
