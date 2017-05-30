@@ -35,7 +35,9 @@ public class FirstStageData : StageData
 
         private void SpawnSmallMonster()
         {
-            Object.Instantiate(smallMonsterPrefab,new Vector3(-4.0f + count * 0.5f,6.0f,0.0f),Quaternion.identity);
+            SmallMonster monster = Object.Instantiate(smallMonsterPrefab,new Vector3(-4.0f + count * 0.5f,6.0f,0.0f),Quaternion.identity).GetComponent<SmallMonster>();
+
+            
         }
     }
 

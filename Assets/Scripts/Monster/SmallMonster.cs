@@ -10,12 +10,4 @@ public class SmallMonster : Monster
 		health = 1;
 		speed = 10.0f;
 	}
-
-	private void OnTriggerEnter2D(Collider2D other)
-	{
-		if(other.CompareTag("Player"))
-		{
-			
-		}
-	}
 }

@@ -30,6 +30,16 @@ public class Monster : MonoBehaviour
 		patterns.Update();
 	}
 
+	private void OnTriggerEnter2D(Collider2D other)
+	{
+		if(other.CompareTag("Player"))
+		{
+			other.GetComponent<PlayerController>().Hit();
+			Die();
+			Debug.Log("Trigger At Monster");
+		}
+	}
+
 	protected virtual void Die()
 	{
 		Destroy(gameObject);
