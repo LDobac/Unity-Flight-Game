@@ -7,13 +7,16 @@ public abstract class StageData
 	protected int curPatternIndex = -1;
 	protected PatternList patterns;
 
+	public StageData()
+	{
+		patterns = new PatternList();
+	}
+
 	public virtual void StartStage()
 	{
 		isRunning = true;
 
 		curPatternIndex = 0;
-
-		patterns = new PatternList();
 	}
 
 	public virtual void UpdatePattern()
@@ -45,6 +48,14 @@ public abstract class StageData
 		get
 		{
 			return isClear;
+		}
+	}
+
+	public PatternList Patterns
+	{
+		get
+		{
+			return patterns;
 		}
 	}
 }

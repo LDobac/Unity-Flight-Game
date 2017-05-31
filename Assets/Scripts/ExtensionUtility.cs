@@ -24,4 +24,26 @@ public static class Vector2Extension
  
          return new Vector2(cos * tx - sin * ty, sin * tx + cos * ty);
      }
- }
+}
+
+public static class ListExtension 
+{
+    public static void Resize<T>(this List<T> list, int size)
+    {
+        int count = list.Count;
+
+        if (size < count)
+        {
+            list.RemoveRange(size, count - size);
+        }
+        else if (size > count)
+        {
+            if (size > list.Capacity)
+            {
+                list.Capacity = size;
+            }
+
+            list.AddRange(new T[size - count]);
+        }
+    }
+}

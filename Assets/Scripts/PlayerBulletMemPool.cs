@@ -10,7 +10,7 @@ public class PlayerBulletMemPool : MonoBehaviour
 
 	private void Awake()
 	{
-		playerBullet = new List<PlayerBullet>();
+		playerBullet = new List<PlayerBullet>(10);
 	}
 
 	public PlayerBullet RequestIdleBullet()

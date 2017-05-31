@@ -3,12 +3,22 @@ using UnityEngine;
 
 public class FirstStageData : StageData
 {
-    private class Pattern1 : PatternClass
+    protected abstract class fsPattern : PatternClass
     {
+        protected FirstStageData stageData;
+
+        public fsPattern(FirstStageData stage) {stageData = stage;}
+    }
+    protected class Pattern1 : fsPattern
+    {
+
         private int count = 5;
         private float spawnDelay = 1.5f;
         private float timer = 0.0f;
         private GameObject smallMonsterPrefab;
+
+        public Pattern1(FirstStageData stage) : base(stage) {}
+        
         public override void Start()
         {
             base.Start();
@@ -30,14 +40,13 @@ public class FirstStageData : StageData
             {
                 Clear();
             }
-            
         }
 
         private void SpawnSmallMonster()
         {
-            SmallMonster monster = Object.Instantiate(smallMonsterPrefab,new Vector3(-4.0f + count * 0.5f,6.0f,0.0f),Quaternion.identity).GetComponent<SmallMonster>();
-
-            
+            Object.Instantiate(
+            smallMonsterPrefab,
+            new Vector3(-4.0f + count * 0.5f,6.0f,0.0f),Quaternion.identity).GetComponent<SmallMonster>();
         }
     }
 
@@ -45,7 +54,7 @@ public class FirstStageData : StageData
     {
         base.StartStage();
 
-        patterns.AddPattern(new Pattern1());
+        patterns.AddPattern(new Pattern1(this));
     }
 
     public override void UpdatePattern()
