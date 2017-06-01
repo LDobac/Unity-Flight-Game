@@ -12,8 +12,8 @@ public class FirstStageData : StageData
     protected class Pattern1 : fsPattern
     {
 
-        private int count = 5;
-        private float spawnDelay = 1.5f;
+        private int count = 100;
+        private float spawnDelay = 0.5f;
         private float timer = 0.0f;
 
         public Pattern1(FirstStageData stage) : base(stage) {}
@@ -42,6 +42,7 @@ public class FirstStageData : StageData
         private void SpawnSmallMonster()
         {
             GameObject monster = stageData.objectPool.RequestObjectWithKey("small_monster_1");
+            monster.SetActive(true);
             monster.transform.position = Vector3.zero;
         }
     }

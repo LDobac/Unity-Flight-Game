@@ -42,7 +42,8 @@ public class Monster : MonoBehaviour
 
 	protected virtual void Die()
 	{
-		Destroy(gameObject);
+		//Destroy(gameObject);
+		gameObject.SetActive(false);
 	}
 
 	public virtual void Hit(int damege)

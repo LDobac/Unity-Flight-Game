@@ -22,7 +22,7 @@ public abstract class StageData
 		{
 			for(int i = 0 ; i < objectList.Count ; i++)
 			{
-				if(!objectList[i].Object.activeSelf && objectList[i].Object.CompareTag(key))
+				if(!objectList[i].Object.activeSelf && objectList[i].Key == key)
 				{
 					Debug.Log("Recycle Idle Data .... StageData:RequestObjectWithKey");
 					return objectList[i].Object;
