@@ -11,7 +11,6 @@ public class FirstStageData : StageData
     }
     protected class Pattern1 : fsPattern
     {
-
         private int count = 5;
         private float spawnDelay = 1.5f;
         private float timer = 0.0f;
