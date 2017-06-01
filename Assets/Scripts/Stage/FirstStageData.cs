@@ -15,15 +15,12 @@ public class FirstStageData : StageData
         private int count = 5;
         private float spawnDelay = 1.5f;
         private float timer = 0.0f;
-        private GameObject smallMonsterPrefab;
 
         public Pattern1(FirstStageData stage) : base(stage) {}
         
         public override void Start()
         {
             base.Start();
-
-            smallMonsterPrefab = Resources.Load("Prefab/small_monster_1",typeof(GameObject)) as GameObject;
         }
 
         public override void Update()
@@ -44,10 +41,15 @@ public class FirstStageData : StageData
 
         private void SpawnSmallMonster()
         {
-            Object.Instantiate(
-            smallMonsterPrefab,
-            new Vector3(-4.0f + count * 0.5f,6.0f,0.0f),Quaternion.identity).GetComponent<SmallMonster>();
+            GameObject monster = stageData.objectPool.RequestObjectWithKey("small_monster_1");
+            monster.transform.position = Vector3.zero;
         }
+    }
+
+    public FirstStageData()
+        :base()
+    {
+        objectPool.AddPrefabFromResources("small_monster_1");
     }
 
     public override void StartStage()

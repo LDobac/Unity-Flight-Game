@@ -40,6 +40,17 @@ public class PlayerController : MonoBehaviour
 		{
 			return null;
 		}
+
+		public override void Drain()
+		{
+			for(int i = 0 ; i < objectList.Count ; i++)
+			{
+				Destroy(objectList[i].Object.gameObject);
+				objectList[i] = null;
+			}
+
+			base.Drain();
+		}
 	}
 
 	public float moveSpeed;

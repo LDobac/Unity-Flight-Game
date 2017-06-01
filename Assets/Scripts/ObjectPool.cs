@@ -50,5 +50,8 @@ public abstract class ObjectPool<T>
 
     public abstract T RequestObjectWithKey(string key);
 
-    public virtual void Drain() {    }  
+    public virtual void Drain()
+    {
+        objectList.Resize(originCapacity);
+    }
 }
