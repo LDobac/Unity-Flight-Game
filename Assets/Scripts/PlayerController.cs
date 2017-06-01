@@ -4,6 +4,44 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour 
 {
+	private class PlayerBulletPool : ObjectPool<PlayerBullet>
+	{
+		private GameObject bulletPrefab = null;
+		
+		public PlayerBulletPool()
+			:base(100)
+		{
+			bulletPrefab = Resources.Load("Prefab/Player Bullet",typeof(GameObject)) as GameObject;
+			if(bulletPrefab == null)
+			{
+				Debug.Log("Load Player Bullet Failed!");
+			}
+		}
+
+		public override PlayerBullet RequestObject()
+		{
+			for(int i = 0 ; i < objectList.Count ; i++)
+			{
+				if(objectList[i].Object.IsIdle)
+				{
+					objectList[i].Object.gameObject.SetActive(true);
+
+					return objectList[i].Object;
+				}
+			}
+
+			GameObject newBullet = Instantiate(bulletPrefab);
+			objectList.Add(new ObjectData(newBullet.GetComponent<PlayerBullet>(),""));
+
+			return newBullet.GetComponent<PlayerBullet>();
+		}
+
+		public override PlayerBullet RequestObjectWithKey(string key)
+		{
+			return null;
+		}
+	}
+
 	public float moveSpeed;
 	public float shotDelay;
 	public float bulletSpeed;
@@ -12,13 +50,13 @@ public class PlayerController : MonoBehaviour
 	private int life = 0;
 	private float shotDelayTimer = 0.0f;
 	private GameObject bulletSpawnPlace;
-	private PlayerBulletMemPool bulletPool;
+	private PlayerBulletPool bulletPool;
 
 	private void Start()
 	{
 		bulletSpawnPlace = transform.GetChild(0).gameObject;
 
-		bulletPool = GetComponent<PlayerBulletMemPool>();
+		bulletPool = new PlayerBulletPool();
 
 		life = 5;
 	}
@@ -57,7 +95,7 @@ public class PlayerController : MonoBehaviour
 
 	private void ShotBullet()
 	{
-		PlayerBullet bullet = bulletPool.RequestIdleBullet();
+		PlayerBullet bullet = bulletPool.RequestObject();
 		bullet.Init(bulletSpawnPlace.transform.position,Vector2.up,bulletSpeed,1,moveLimit);
 	}
 
