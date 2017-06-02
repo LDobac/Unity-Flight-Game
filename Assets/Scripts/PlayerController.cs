@@ -113,5 +113,7 @@ public class PlayerController : MonoBehaviour
 	public void Hit()
 	{
 		life--;
+
+		Debug.Log("Player Hit ! " + life.ToString() + " / " + "5");
 	}
 }

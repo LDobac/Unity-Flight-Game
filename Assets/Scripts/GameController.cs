@@ -35,6 +35,8 @@ public class GameController : MonoBehaviour
 			}
 			else
 			{
+				stages[curStage - 1].Drain();
+				stages[curStage - 1] = null;
 				if(stages.Length == curStage)
 				{
 					successfulAllStage = true;

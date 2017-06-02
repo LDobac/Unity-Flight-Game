@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Monster : MonoBehaviour 
+public abstract class Monster : MonoBehaviour 
 {
-	public class MonsterPattern : PatternClass
+	public abstract class MonsterPattern : PatternClass
 	{
 		protected Monster targetMonster;
 
-		public void SetTargetMonster(Monster monster)
+		public MonsterPattern(Monster monster)
 		{
 			targetMonster = monster;
 		}
@@ -23,12 +23,20 @@ public class Monster : MonoBehaviour
 		patterns = new PatternList();
 	}
 
-	protected virtual void Start() {}
+	protected virtual void Start() { }
 
 	protected virtual void Update() 
 	{
 		patterns.Update();
 	}
+
+	public virtual void Reset() {}
+
+	public virtual void Idle()
+	 {
+		 gameObject.SetActive(false);
+		 patterns.Stop();		 
+	 }
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
@@ -44,6 +52,7 @@ public class Monster : MonoBehaviour
 	{
 		//Destroy(gameObject);
 		gameObject.SetActive(false);
+		patterns.Stop();
 	}
 
 	public virtual void Hit(int damege)
@@ -82,6 +91,14 @@ public class Monster : MonoBehaviour
 		set
 		{
 			speed = value;
+		}
+	}
+
+	public PatternList PatternList
+	{
+		get
+		{
+			return patterns;
 		}
 	}
 }

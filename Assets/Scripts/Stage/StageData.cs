@@ -108,10 +108,13 @@ public abstract class StageData
 			{
 				isRunning = false;
 				isClear = true;
-
-				Debug.Log("Pass All Pattern Stage");
 			}
 		}
+	}
+
+	public void Drain()
+	{
+		objectPool.Drain();
 	}
 
 	public bool IsRunning

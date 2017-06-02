@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 public abstract class PatternClass
 {
@@ -11,7 +12,7 @@ public abstract class PatternClass
         isComplete = false;
     }
     
-    public virtual void Update() {}
+    public abstract void Update();
 
     public virtual void Clear()
     {
@@ -38,6 +39,8 @@ public abstract class PatternClass
 
 public class PatternList
 {
+    private bool pause = false;
+    private bool loop = false;
     private bool allPatternPass = true;
     private int curPattern = 0;
     private List<PatternClass> patterns;
@@ -56,7 +59,7 @@ public class PatternList
 
     public void Update()
     {
-        if(!allPatternPass)
+        if(!allPatternPass && !pause)
         {
             if(!patterns[curPattern].IsRunning && !patterns[curPattern].IsComplete)
             {
@@ -73,7 +76,14 @@ public class PatternList
 
                     if(curPattern == patterns.Count)
                     {
-                        allPatternPass = true;
+                        if(loop)
+                        {
+                            curPattern = 0;
+                        }
+                        else
+                        {
+                            allPatternPass = true;
+                        }                        
                     }
                 }
             }
@@ -85,11 +95,38 @@ public class PatternList
         return patterns[curPattern];
     }
 
+    public void Stop()
+    {
+        allPatternPass = true;
+    }
+
+    public void Pause()
+    {
+        pause = true;
+    }
+
+    public void Resume()
+    {
+        pause = false;
+    }
+
     public bool AllPatternPass
     {
         get
         {
             return allPatternPass;
+        }
+    }
+
+    public bool Loop
+    {
+        get
+        {
+            return loop;
+        }
+        set
+        {
+            loop = value;
         }
     }
 }
