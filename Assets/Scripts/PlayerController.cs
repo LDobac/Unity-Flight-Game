@@ -4,6 +4,17 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour 
 {
+	[System.Serializable]
+	private class BulletData
+	{
+		public int damege = 0;
+		public float shotDelay = 0.0f;
+		public float velocity = 0.1f;
+		public float acceleration = 0.0f;
+		public float angleAcceleration = 0.0f;
+		public Vector2 direction = Vector2.up;
+		public Boundary moveLimit = new Boundary(0.0f,0.0f,0.0f,0.0f); 
+	}
 	private class PlayerBulletPool : ObjectPool<PlayerBullet>
 	{
 		private GameObject bulletPrefab = null;
@@ -54,14 +65,17 @@ public class PlayerController : MonoBehaviour
 	}
 
 	public float moveSpeed;
-	public float shotDelay;
-	public float bulletSpeed;
 	public Boundary moveLimit;
 
+	private bool controlPlayer = true; 
 	private int life = 0;
 	private float shotDelayTimer = 0.0f;
 	private GameObject bulletSpawnPlace;
 	private PlayerBulletPool bulletPool;
+
+	[SerializeField]
+	private BulletData bulletData;
+	
 
 	private void Start()
 	{
@@ -73,18 +87,21 @@ public class PlayerController : MonoBehaviour
 	}
 	private void Update()
 	{
-		if(life > 0)
+		if(controlPlayer)
 		{
-			FlightMove();
-
-			shotDelayTimer += Time.deltaTime;
-			if(shotDelayTimer >= shotDelay)
+			if(life > 0)
 			{
-				if(Input.GetKey(KeyCode.Space))
-				{
-					ShotBullet();
+				FlightMove();
 
-					shotDelayTimer = 0.0f;
+				shotDelayTimer += Time.deltaTime;
+				if(shotDelayTimer >= bulletData.shotDelay)
+				{
+					if(Input.GetKey(KeyCode.Space))
+					{
+						ShotBullet();
+
+						shotDelayTimer = 0.0f;
+					}
 				}
 			}
 		}
@@ -107,7 +124,14 @@ public class PlayerController : MonoBehaviour
 	private void ShotBullet()
 	{
 		PlayerBullet bullet = bulletPool.RequestObject();
-		bullet.Init(bulletSpawnPlace.transform.position,Vector2.up,bulletSpeed,1,moveLimit);
+		bullet.Init(
+			bulletSpawnPlace.transform.position,
+			bulletData.direction,
+			bulletData.velocity,
+			bulletData.acceleration,
+			bulletData.angleAcceleration,
+			bulletData.damege,
+			bulletData.moveLimit);
 	}
 
 	public void Hit()
@@ -115,5 +139,10 @@ public class PlayerController : MonoBehaviour
 		life--;
 
 		Debug.Log("Player Hit ! " + life.ToString() + " / " + "5");
+	}
+
+	public void SetControlPlayer(bool b)
+	{
+		controlPlayer = b;
 	}
 }

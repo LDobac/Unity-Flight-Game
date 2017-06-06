@@ -1,5 +1,7 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class FirstStageData : StageData
 {
@@ -10,16 +12,6 @@ public class FirstStageData : StageData
         public fsPattern(FirstStageData stage) {stageData = stage;}
     }
 
-    protected class StageStartPattern : fsPattern
-    {
-        public StageStartPattern(FirstStageData stage) : base(stage) {}
-
-        public override void Update()
-        {
-            Debug.Log("Stage 1 Start");
-            Clear();
-        }
-    }
     protected class MMovePattern : Monster.MonsterPattern
     {
         private Vector3 targetPos;
@@ -51,7 +43,50 @@ public class FirstStageData : StageData
             if(targetPos == targetMonster.transform.position)
             {
                 Clear();
-                targetMonster.Idle();
+            }
+        }
+    }
+
+    protected class StageStartPattern : fsPattern
+    {
+        private bool toggle = false;
+        private float transparent = 0.0f;
+        private Text startText;
+        public StageStartPattern(FirstStageData stage) : base(stage) {}
+
+        public override void Start()
+        {
+            Debug.Log("Stage 1 Start");            
+
+            base.Start();
+            startText = GameObject.Find("Canvas").transform.GetChild(0).GetComponent<Text>();
+            startText.gameObject.SetActive(true);
+            startText.color = new Color(0.0f,0.0f,0.0f,0.0f);
+        }
+
+        public override void Update()
+        {
+            if(!toggle && transparent < 1.0f )
+            {
+                transparent += 1.0f * Time.deltaTime;
+                startText.color = new Color(0.0f,0.0f,0.0f,transparent);
+
+                if(transparent >= 1.0f)
+                {
+                    toggle = true;
+                }
+            }
+            else if(toggle && transparent >= 0.0f)
+            {
+                transparent -= 1.0f * Time.deltaTime;
+                startText.color = new Color(0.0f,0.0f,0.0f,transparent);
+
+                if(transparent <= 0.0f)
+                {
+                    startText.gameObject.SetActive(false);
+                    
+                    Clear();       
+                }
             }
         }
     }
@@ -95,6 +130,11 @@ public class FirstStageData : StageData
                 {
                     return;
                 }
+            }
+
+            for(int i = 0 ; i < monsterCount ; i++)
+            {
+                smallMonsterArr[i].gameObject.SetActive(false);
             }
 
             Clear();
@@ -168,6 +208,11 @@ public class FirstStageData : StageData
                 }
             }
 
+            for(int i = 0 ; i < monsterCount ; i++)
+            {
+                smallMonsterArr[i].gameObject.SetActive(false);
+            }
+
             Clear();
         }
 
@@ -179,14 +224,105 @@ public class FirstStageData : StageData
             return monster;
         }
     }
-    protected class StageEndPattern : fsPattern
+
+    protected class BossPattern : fsPattern
     {
-        public StageEndPattern(FirstStageData stage) : base(stage) {}
+        private float cosAngle = 0.0f;
+        private FirstStageBoss bossMonster;
+        public BossPattern(FirstStageData stage) : base(stage) {}
+
+        public override void Start()
+        {
+            base.Start();
+
+            bossMonster = stageData.objectPool.RequestObjectWithKey("first_stage_boss").GetComponent<FirstStageBoss>();
+            bossMonster.Reset();
+            bossMonster.transform.position = new Vector3(0.0f,13.0f,0.0f);
+
+            bossMonster.AddPattern(new MMovePattern(bossMonster,new Vector3(0.0f,6.0f,0.0f),bossMonster.Speed,0.0f));
+        }
 
         public override void Update()
         {
-            Debug.Log("Stage 1 Clear ! ");
-            Clear();
+            cosAngle += Time.deltaTime;
+            Vector3 pos = bossMonster.transform.position;
+            pos.y += Mathf.Sin(cosAngle) * Time.deltaTime;
+            bossMonster.transform.position = pos;
+
+            if(bossMonster.IsDied)
+            {
+                Debug.Log("Killed First Stage Boss");
+                Clear();
+            }
+        }
+    }
+
+    protected class StageEndPattern : fsPattern
+    {
+        private bool move = true;
+        private bool moveToggle = false;
+        private float transparent = 0.0f;  
+        private Image blackPanel;
+        private PlayerController player;
+        
+        public StageEndPattern(FirstStageData stage) : base(stage) {}
+
+        public override void Start()
+        {
+            base.Start();
+
+            blackPanel = GameObject.Find("Canvas").transform.GetChild(1).GetComponent<Image>();
+            blackPanel.color = new Color(0.0f,0.0f,0.0f,0.0f);
+            blackPanel.gameObject.SetActive(true);
+
+            player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+            player.SetControlPlayer(false);
+            player.moveLimit.maxY = 15.0f;
+        }
+        
+        public override void Update()
+        {
+            if(move)
+            {
+                if(!moveToggle)
+                {
+                    Vector3 target = new Vector3(0.0f,-4.0f,0.0f);
+                    player.transform.position = Vector3.MoveTowards(player.transform.position,target,player.moveSpeed * 0.5f * Time.deltaTime);
+
+                    if(target == player.transform.position)
+                    {
+                        moveToggle = true;
+                    }
+                }
+                else
+                {
+                    Vector3 target = new Vector3(0.0f,12.0f,0.0f);
+                    player.transform.position = Vector3.MoveTowards(player.transform.position,target,player.moveSpeed * Time.deltaTime);
+
+                    if(target == player.transform.position)
+                    {
+                        move = false;
+                    }
+                }   
+            }
+            else
+            {
+                if(transparent <= 1.0f )
+                {
+                    transparent += 1.0f * Time.deltaTime;
+                    blackPanel.color = new Color(0.0f,0.0f,0.0f,transparent);
+
+                    if(transparent >= 1.0f)
+                    {
+                        PlayerController player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+                        player.SetControlPlayer(false);
+
+                        Clear();
+
+                        SceneManager.LoadScene(1);
+                    }
+                }
+            }
         }
     }
 
@@ -195,6 +331,7 @@ public class FirstStageData : StageData
     {
         objectPool.AddPrefabFromResources("small_monster_1");
         objectPool.AddPrefabFromResources("small_monster_2");
+        objectPool.AddPrefabFromResources("first_stage_boss");
     }
 
     public override void StartStage()
@@ -204,6 +341,7 @@ public class FirstStageData : StageData
         patterns.AddPattern(new StageStartPattern(this));
         patterns.AddPattern(new Pattern1(this));
         patterns.AddPattern(new Pattern2(this));
+        patterns.AddPattern(new BossPattern(this));
         patterns.AddPattern(new StageEndPattern(this));
     }
 

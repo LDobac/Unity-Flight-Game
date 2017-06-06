@@ -14,6 +14,10 @@ public abstract class Monster : MonoBehaviour
 		}
 	} 
 
+	public int originHealth;
+	public float originSpeed;
+
+	protected bool isDied = false;
 	protected int health = 0;
 	protected float speed = 0.0f;
 	protected PatternList patterns = null;
@@ -23,14 +27,24 @@ public abstract class Monster : MonoBehaviour
 		patterns = new PatternList();
 	}
 
-	protected virtual void Start() { }
+	protected virtual void Start() 
+	{
+		health = originHealth;
+		speed = originSpeed;
+	}
 
 	protected virtual void Update() 
 	{
 		patterns.Update();
 	}
 
-	public virtual void Reset() {}
+	public virtual void Reset() 
+	{
+		health = originHealth;
+		speed = originSpeed;
+		gameObject.SetActive(true);
+		isDied = false;
+	}
 
 	public virtual void Idle()
 	 {
@@ -43,16 +57,13 @@ public abstract class Monster : MonoBehaviour
 		if(other.CompareTag("Player"))
 		{
 			other.GetComponent<PlayerController>().Hit();
-			Die();
-			Debug.Log("Trigger At Monster");
 		}
 	}
 
 	protected virtual void Die()
 	{
-		//Destroy(gameObject);
-		gameObject.SetActive(false);
-		patterns.Stop();
+		Idle();
+		isDied = true;
 	}
 
 	public virtual void Hit(int damege)
@@ -99,6 +110,14 @@ public abstract class Monster : MonoBehaviour
 		get
 		{
 			return patterns;
+		}
+	}
+	
+	public bool IsDied
+	{
+		get
+		{
+			return isDied;
 		}
 	}
 }

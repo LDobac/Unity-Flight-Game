@@ -17,7 +17,7 @@ public class Bullet : MonoBehaviour
         {
             velocity += acceleration;
 
-            direction = direction.Rotate(dgrAngleAcceleration);
+            direction = direction.Rotate(dgrAngleAcceleration * Time.deltaTime);
 
             //Atan2를 사용시 x : 1, y : 0 일경우 0도, x : 0 , y : 1 일경우 0도 처럼 행동 하기 위해 90도를 빼줌
             dgrAngle = (Mathf.Atan2(direction.y,direction.x) * Mathf.Rad2Deg) - 90;

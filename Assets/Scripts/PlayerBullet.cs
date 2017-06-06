@@ -35,9 +35,9 @@ public class PlayerBullet : Bullet
 			Idle();
 		}	
 	}
-	public void Init(Vector3 pos,Vector2 dir, float vel,int dmg,Boundary boundary)
+	public void Init(Vector3 pos,Vector2 dir, float vel,float acc, float angAcc,int dmg,Boundary boundary)
 	{
-		base.Init(vel,0.0f,dir,0.0f);
+		base.Init(vel,acc,dir,angAcc);
 
 		transform.position = pos;
 

@@ -1,45 +1,57 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour 
 {
+	public int stageCount;
+
 	private bool successfulAllStage = false;
 	private int curStage = 0;
-	private StageData[] stages;
-
-	private void Awake()
-	{
-		stages = new StageData[1];
-	}
+	private StageData stage;
 
 	private void Start()
 	{
-		stages[0] = new FirstStageData();
+		int index = SceneManager.GetActiveScene().buildIndex;
+		
+		switch(index)
+		{
+			case 0:
+				stage = new FirstStageData();			
+				break;
+			case 1:
+				stage = new SecondStageData();			
+				break;
+			case 2:
+				stage = new ThirdStageData();			
+				break;
+		}
 
-		curStage = 1;
+		curStage = index + 1;
 	}
 
 	private void Update()
 	{
 		if(!successfulAllStage)
 		{
-			if(!stages[curStage - 1].IsClear && !stages[curStage - 1].IsRunning)
+			if(!stage.IsClear && !stage.IsRunning)
 			{
-				stages[curStage - 1].StartStage();
+				stage.StartStage();
 			}
 
-			if(stages[curStage - 1].IsRunning)
+			if(stage.IsRunning)
 			{
-				stages[curStage - 1].UpdatePattern();
+				stage.UpdatePattern();
 			}
 			else
 			{
-				stages[curStage - 1].Drain();
-				stages[curStage - 1] = null;
-				if(stages.Length == curStage)
+				stage.Drain();
+				stage = null;
+				if(stageCount == curStage)
 				{
 					successfulAllStage = true;
+					Debug.Log("All Stage Clear!");
 				}
 				else
 				{

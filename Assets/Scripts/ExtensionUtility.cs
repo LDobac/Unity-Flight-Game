@@ -9,6 +9,18 @@ public class Boundary
 	public float minY;
 	public float maxX;
 	public float maxY;
+
+    public Boundary()
+    {
+        maxX = maxY = minX = minY = 0.0f;
+    }
+    public Boundary(float minX,float minY,float maxX,float maxY)
+    {
+        this.maxX = maxX;
+        this.minX = minX;
+        this.maxY = maxY;
+        this.minY = minY;
+    }
 }
 
 public static class Vector2Extension 
